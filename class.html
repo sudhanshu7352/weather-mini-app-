@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+      #temp{
+        margin-right: 150px;
+        margin-top: 30px;
+        box-shadow: rgba(163, 18, 18, 0.24) 0px 3px 8px;
+        width: 200px;
+        height: 300px;
+        /* padding: 20px; */
+      }
+      #maindiv{
+        display: flex;
+        margin-top: 30px;
+        padding: 30px;
+        height: 400px;
+        width: 1000px;
+        margin: auto;
+        /* border: black 1px solid; */
+      }
+      /* #map{
+        height: 300px;
+        margin-top: 100px;
+      } */
+      input{
+        margin-left: 30%;
+        width: 500px;
+        height: 30px;
+        border-radius: 10px;
+        padding-left: 20px;
+        font-size: large;
+      }
+      button{
+        height: 35px;
+        border-radius: 10px;
+        background: gray;
+        color: white;
+        border: 0;
+        cursor: pointer;
+      }
+      /* #temp{
+        text-align: center;
+      } */
+      #day5{
+        display: grid;
+        grid-template-columns: repeat(40,180px);
+        width: 1150px;
+        margin-left: 100px;
+        overflow: scroll;
+      }
+      #day5>div{
+        border: 1px solid rgb(6, 103, 128);
+        background: cadetblue;
+        padding: 10px;
+      }
+    </style>
+</head>
+<body>
+    <input type="text" id="city" placeholder="Search City">
+   <button onclick="days(),getWeather(),showMap()">Search</button>
+   <div id="maindiv">
+    <div id="temp"></div>
+    <div id="map"></div>
+      
+ 
+   </div>
+    <div id="day5"></div>
+
+</body>
+</html>
+<script>
+  //  function all(){
+  //   getWeather();
+  //   showMap()
+  //  }
+  let data_div =document.getElementById("temp")
+
+  async function getWeather(){
+       let city =document.getElementById("city").value;
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=000ea10fae727b5e0d08edbb2b5f07c0&units=metric`
+     
+    try{
+        
+      let response =await fetch(url)
+      let data =await response.json();
+      showWeather(data)
+     // console.log(data)
+    }
+    catch(err){
+      console.log(err)
+      
+    }
+  }
+  async function showMap(){
+    let city =document.getElementById("city").value;
+    let map =document.getElementById("map");
+    map.innerHTML = `<div class="mapouter"><div class="gmap_canvas"><iframe width="600" height="400" id="gmap_canvas" src="https://maps.google.com/maps?q=${city}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a href="https://fmovies-online.net"></a><br><style>.mapouter{position:relative;text-align:right;height:500px;width:600px;}</style><a href="https://www.embedgooglemap.net"></a><style>.gmap_canvas {overflow:hidden;background:none!important;height:500px;width:600px;}</style></div></div>`
+    // let map =document.getElementById("map")
+    // let url2 = `https://www.google.com/maps/embed/v1/MAP_MODE?key=AIzaSyCMZ0_8E3ptNJWQkiLzUWxcfISrGDppFJE&parameters`
+     try{
+       let res =await fetch(map);
+       let data2 =await res.json();
+
+      // console.log(data2)
+     }
+     catch(err){
+       console.log(err)
+     }
+  }
+
+  function showWeather(weather){
+    data_div.textContent =""
+      let temp =document.createElement("p");
+      data_div.style.padding = "20px"
+       
+      let h2 =document.createElement("h2");
+      h2.innerText=`${weather.name}`
+      temp.innerText = `Temp : ${weather.main.temp}° C`;
+      if(weather.main.temp <15){
+        let img = document.createElement('img');
+        img.src ="cloudy.png"
+        img.style.width ="80px"
+        data_div.append(img)
+      }else{
+        let img2 = document.createElement('img');
+        img2.src ="sun.png"
+        img2.style.width ="80px"
+        data_div.append(img2)
+      }
+      let Wind=document.createElement("p");
+
+       Wind.innerText = `Wind Speed : ${weather.wind.speed} km/hr`;
+      let pressure=document.createElement("p");
+
+      pressure.innerText = `Pressure : ${weather.main.pressure}`;
+
+      let humidity =document.createElement("p");
+
+      humidity.innerText = `Humidity : ${weather.main.humidity} %`;
+
+      data_div.append(h2,temp,Wind,pressure,humidity)
+  }
+  //for 5-day telecast
+ let day5 = document.getElementById("day5");
+
+ async function days(){
+  let city =document.getElementById("city").value;
+  let urlof = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=0e98328a513c07caca5a0edc01ffedcf&units=metric`
+  //  let urlof =  `api.openweathermap.org/data/2.5/forecast?q=${city}&mode=xml&appid=000ea10fae727b5e0d08edbb2b5f07c0`
+   try{
+       let res2 = await fetch(urlof);
+        let data3 =await res2.json();
+        let x = data3.list
+       
+      // console.log(x)
+        dy(x)
+   }
+   catch(err){
+     console.log(err)
+   }
+ }
+//  let min =0;
+ function dy(tem){
+  
+   tem.map(function (tem){
+    //  day5.innerText =""
+     let div =document.createElement("div");
+
+      // let p = document.createElement("p");
+     let date = tem.dt_txt;
+    //  p.innerText =date[9]
+      
+     //  date.split("-")
+      // console.log(date)
+
+      let img = document.createElement("img");
+      img.src ="sun.png"
+      img.style.width ="39px";
+      img.style.margin ="15px"
+      let min_temp =document.createElement("h3");
+      min_temp.innerText = `Min. ${tem.main.temp_min}° C`;
+
+      let max_temp =document.createElement("h3");
+      max_temp.innerText = `Max.${tem.main.temp_max}° C`;
+
+      // if(date>min){
+      //   min =date
+      //   div.append(min,img,min_temp,max_temp)
+      // }
+       div.append(img,date,min_temp,max_temp)
+
+      day5.append(div)
+   })
+ }
+</script>
